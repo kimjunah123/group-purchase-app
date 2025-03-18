@@ -22,7 +22,7 @@ if st.button("🚀 Join the Purchase"):
         st.session_state.signups += 1
         st.success("🎉 You have joined the purchase!")
         time.sleep(2)
-        st.experimental_rerun()
+        st.rerun()
     else:
         st.warning("✅ Purchase goal reached! Check your email for the deal.")
 
