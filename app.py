@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import os
+import pandas as pd
 
 # File to store sign-ups
 SIGNUPS_FILE = "signups.txt"
@@ -21,7 +22,7 @@ username = st.text_input("Enter your name:")
 email = st.text_input("Enter your email:")
 
 # User Input: Choose Products and Quantity
-products = {"innerb Glowshot Collagen": 300, "innerb Aqua Bank": 500, "innerb Aqua Rich Double Up": 500}
+products = {"Collagen Glowshot": 300, "Aqua Bank": 500, "Aqua Rich Double Up C": 500}
 selected_products = st.multiselect("Select Products:", list(products.keys()))
 product_quantities = {product: st.number_input(f"Quantity for {product}", min_value=1, max_value=100, value=1) for product in selected_products}
 
@@ -56,3 +57,33 @@ for product in selected_products:
     if total_quantity >= goal:
         st.balloons()
         st.success(f"🎊 Group purchase for {product} unlocked!")
+
+# ---- ADMIN PANEL ---- #
+st.sidebar.title("🔑 Admin Panel")
+if st.sidebar.checkbox("Show Sign-Up Data"):
+    all_entries = []
+    
+    # Flatten data for display
+    for product, entries in signups.items():
+        for entry in entries:
+            all_entries.append({
+                "Product": product,
+                "Name": entry["name"],
+                "Email": entry["email"],
+                "Quantity": entry["quantity"]
+            })
+
+    if all_entries:
+        df = pd.DataFrame(all_entries)
+        st.sidebar.write(df)
+
+        # Download as CSV
+        csv = df.to_csv(index=False).encode("utf-8")
+        st.sidebar.download_button(
+            label="📥 Download Sign-Up Data",
+            data=csv,
+            file_name="group_purchase_signups.csv",
+            mime="text/csv"
+        )
+    else:
+        st.sidebar.write("No sign-ups yet.")
