@@ -1,17 +1,33 @@
 import streamlit as st
 import json
 import os
-import pandas as pd
 
 # File to store sign-ups
 SIGNUPS_FILE = "signups.txt"
 
-# Load sign-ups from file
+# Debug: Check if the file exists and its content
 if os.path.exists(SIGNUPS_FILE):
+    st.sidebar.write("✅ signups.txt exists")
+    with open(SIGNUPS_FILE, "r") as file:
+        file_content = file.read()
+        st.sidebar.write(f"📂 File Content:\n{file_content}")  # Show file content in the sidebar
+
+# Ensure the file exists and contains valid JSON
+if not os.path.exists(SIGNUPS_FILE) or os.stat(SIGNUPS_FILE).st_size == 0:
+    st.sidebar.write("⚠ signups.txt is empty. Initializing it...")
+    with open(SIGNUPS_FILE, "w") as file:
+        json.dump({}, file)  # Initialize as an empty dictionary
+
+# Load sign-ups safely
+try:
     with open(SIGNUPS_FILE, "r") as file:
         signups = json.load(file)
-else:
-    signups = {}
+    st.sidebar.write("✅ JSON Loaded Successfully")
+except json.JSONDecodeError:
+    st.sidebar.write("❌ JSONDecodeError: Resetting signups.txt")
+    signups = {}  # Reset if there's an error in reading
+    with open(SIGNUPS_FILE, "w") as file:
+        json.dump(signups, file)
 
 # Streamlit UI
 st.title("📦 Group Purchase Tracker")
