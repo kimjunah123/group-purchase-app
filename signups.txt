@@ -1,1 +1,13 @@
+import streamlit as st
+import json
+import os
+import pandas as pd
+
+# File to store sign-ups
+SIGNUPS_FILE = "signups.txt"
+
+# Ensure the file exists and contains valid JSON
+if not os.path.exists(SIGNUPS_FILE) or os.stat(SIGNUPS_FILE).st_size == 0:
+    with open(SIGNUPS_FILE, "w") as file:
+        json.dump({}, file
 
