@@ -67,3 +67,38 @@ for product in selected_products:
 
 # ---- ADMIN PANEL (Hidden unless authorized) ---- #
 ADMIN_PASSWORD = "bloomkare123"
+
+st.sidebar.title("🔑 Admin Login")
+password = st.sidebar.text_input("Enter Admin Password:", type="password")
+
+if password == ADMIN_PASSWORD:
+    st.sidebar.title("📊 Admin Panel")
+    if st.sidebar.checkbox("Show Sign-Up Data"):
+        all_entries = []
+        
+        # Flatten data for display
+        for product, entries in signups.items():
+            for entry in entries:
+                all_entries.append({
+                    "Product": product,
+                    "Name": entry["name"],
+                    "Email": entry["email"],
+                    "Quantity": entry["quantity"]
+                })
+        
+        if all_entries:
+            df = pd.DataFrame(all_entries)
+            st.sidebar.write(df)
+
+            # Download as CSV
+            csv = df.to_csv(index=False).encode("utf-8")
+            st.sidebar.download_button(
+                label="📥 Download Sign-Up Data",
+                data=csv,
+                file_name="group_purchase_signups.csv",
+                mime="text/csv"
+            )
+        else:
+            st.sidebar.write("No sign-ups yet.")
+else:
+    st.sidebar.write("🔒 Admin panel is locked. Enter the correct password to access.")
