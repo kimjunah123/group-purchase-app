@@ -1,32 +1,52 @@
 import streamlit as st
-import time
+import json
+import os
 
-# Group purchase goal
-GOAL = 5
+# File to store sign-ups
+SIGNUPS_FILE = "signups.txt"
 
-# Simulate a database storage with session state
-if "signups" not in st.session_state:
-    st.session_state.signups = 0
+# Load sign-ups from file
+if os.path.exists(SIGNUPS_FILE):
+    with open(SIGNUPS_FILE, "r") as file:
+        signups = json.load(file)
+else:
+    signups = {}
 
 # Streamlit UI
 st.title("📦 Group Purchase Tracker")
 st.write("Join the group purchase and unlock an exclusive discount!")
 
-# Display progress bar
-st.progress(st.session_state.signups / GOAL)
-st.write(f"👥 {st.session_state.signups} out of {GOAL} people have joined.")
+# User Input: Choose a Product
+product = st.selectbox("Select a Product:", ["Product A", "Product B", "Product C"])
 
-# Button to sign up
+# Set group purchase goal
+GOAL = 5
+
+# Initialize sign-ups for selected product
+if product not in signups:
+    signups[product] = []
+
+# Show progress bar
+st.progress(len(signups[product]) / GOAL)
+st.write(f"👥 {len(signups[product])} out of {GOAL} people have joined for {product}.")
+
+# User Input: Enter Username
+username = st.text_input("Enter your name:")
+
+# Join the purchase
 if st.button("🚀 Join the Purchase"):
-    if st.session_state.signups < GOAL:
-        st.session_state.signups += 1
-        st.success("🎉 You have joined the purchase!")
-        time.sleep(2)
+    if username and username not in signups[product]:
+        signups[product].append(username)
+        with open(SIGNUPS_FILE, "w") as file:
+            json.dump(signups, file)  # Save updated sign-ups
+        st.success(f"🎉 {username}, you have joined {product}!")
         st.rerun()
+    elif username in signups[product]:
+        st.warning("⚠ You have already joined!")
     else:
-        st.warning("✅ Purchase goal reached! Check your email for the deal.")
+        st.error("❌ Please enter your name.")
 
-# Show completion message if goal is reached
-if st.session_state.signups >= GOAL:
+# Show Completion Message
+if len(signups[product]) >= GOAL:
     st.balloons()
-    st.success("🎊 Group purchase unlocked!")
+    st.success(f"🎊 Group purchase for {product} unlocked!")
