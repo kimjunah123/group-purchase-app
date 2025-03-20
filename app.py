@@ -29,7 +29,7 @@ username = st.text_input("Enter your name:")
 email = st.text_input("Enter your email:")
 
 # User Input: Choose Products and Quantity
-products = {"Collagen Glowshot 30 Bottles": 300, "Collagen Glowshot 6 Bottles": 500}
+products = {"30 Bottles": 300, "6 Bottles": 500}
 selected_products = st.multiselect("Select Products:", list(products.keys()))
 product_quantities = {product: st.number_input(f"Quantity for {product}", min_value=1, max_value=100, value=1) for product in selected_products}
 
