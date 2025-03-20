@@ -60,7 +60,7 @@ else:
             with open(SIGNUPS_FILE, "w") as file:
                 json.dump(signups, file)  # Save updated sign-ups
             st.session_state["joined"] = True
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("❌ Please enter your name, email, and select at least one product.")
 
